@@ -53,7 +53,6 @@
           </el-row>
         </el-col>
       </el-row>
-      <Table />
     </el-main>
     <el-footer />
   </el-container>
@@ -62,42 +61,17 @@
 <script>
 import DataTable from './components/data-table'
 import PanelTop from '@/components/PanelTop/index'
-import Table from './components/table'
+import { paginationOptions, fieldOptions } from './utils/settings'
 export default {
   name: 'CoverageStatistics',
   components: {
-    DataTable, PanelTop, Table
+    DataTable, PanelTop
   },
   data() {
     return {
-      fieldOptions: [//  field筛选域
-        {
-          value: 'date_time',
-          label: 'date_time'
-        }, {
-          value: 'task_id',
-          label: 'task_id'
-        }
-      ],
+      fieldOptions,
       fieldValue: 'task_id',
-      paginationOptions: [// 分页数量筛选
-        {
-          value: 10,
-          label: 10
-        },
-        {
-          value: 25,
-          label: 25
-        },
-        {
-          value: 50,
-          label: 50
-        },
-        {
-          value: 100,
-          label: 100
-        }
-      ],
+      paginationOptions,
       paginationValue: 50, // 分页数量
       filterValue: '' // 数据筛选
     }

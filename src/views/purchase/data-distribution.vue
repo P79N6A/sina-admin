@@ -13,8 +13,16 @@
             />
           </el-select>
         </el-col>
-        <el-col :span="4" :offset="1">
-          <el-select v-model="passiveValue" placeholder="请选择" size="small">
+        <el-col :span="8" :offset="1">
+          <el-select
+            v-show="fieldValue==='task_id'"
+            v-model="passiveValue"
+            style="width:100%;"
+            multiple
+            :multiple-limit="5"
+            placeholder="请选择"
+            size="small"
+          >
             <el-option
               v-for="item in passiveOptions"
               :key="item.value"
@@ -22,6 +30,17 @@
               :value="item.value"
             />
           </el-select>
+          <el-date-picker
+            v-show="fieldValue!=='task_id'"
+            v-model="dateValue"
+            type="dates"
+            format="yyyyMMdd"
+            placeholder="选择一个或多个日期"
+            style="width:90%;"
+            :default-value="new Date()"
+            size="small"
+            @change="change"
+          />
         </el-col>
         <el-col :span="3" :offset="1">
           <el-select v-model="extraValue" placeholder="请选择" size="small">
@@ -41,16 +60,12 @@
         <el-col :span="24" class="common-container top-radius">
           <el-row>
             <el-col :span="24">
-              <panel-top title="数据分布展示">
-                <template v-slot:count>
-                  <uid-count-panel :uid-count="currUidCount" />
-                </template>
-              </panel-top>
+              <panel-top title="数据分布展示" />
             </el-col>
           </el-row>
           <el-row v-loading="loading">
             <el-col :span="24">
-              <charts-data :curr-charts-data="currChartsData" :x-name="extraValue" />
+              <charts-data :curr-charts-data="currChartsData" />
             </el-col>
           </el-row>
         </el-col>
@@ -61,116 +76,102 @@
 </template>
 
 <script>
-import { passiveOptinsFormat } from './utils/data-format'
+import { passiveOptinsFormat, setDateArray, formatChartsData } from './utils/data-format'
 import { getTaskChartsData, getPassiveOptions, getDateChartsData } from '@/apis/purchases/index'
+import { extraOptions, fieldOptions } from './utils/settings'
+import { initCurrTime } from '@/utils/date'
 import ChartsData from './components/charts-data'
 import PanelTop from '@/components/PanelTop'
-import UidCountPanel from '@/components/UidCountPanel/index'
 export default {
   name: 'DataDistribution',
   components: {
-    ChartsData, PanelTop, UidCountPanel
+    ChartsData, PanelTop
   },
   data() {
     return {
       loading: false,
-      fieldOptions: [// field筛选
-        {
-          value: 'task_id',
-          label: 'task_id'
-        },
-        {
-          value: 'date_time',
-          label: 'date_time'
-        }
-      ],
+      fieldOptions,
       passiveOptions: [], // passive筛选
-      extraOptions: [
-        {
-          value: 'cat_ids',
-          label: 'cat_ids'
-        },
-        {
-          value: 'city_level',
-          label: 'city_level'
-        },
-        {
-          value: 'obj_ids',
-          label: 'obj_ids'
-        },
-        {
-          value: 'user_type_id',
-          label: 'user_type_id'
-        },
-        {
-          value: 'reg_time',
-          label: 'reg_time'
-        },
-        {
-          value: 'gender',
-          label: 'gender'
-        },
-        {
-          value: 'age',
-          label: 'age'
-        },
-        {
-          value: 'tag_ids',
-          label: 'tag_ids'
-        },
-        {
-          value: 'value',
-          label: 'value'
-        }
-      ],
-      passiveMap: {
-        'task_id': [],
-        'date_time': []
-      },
+      extraOptions,
       fieldValue: 'task_id',
-      passiveValue: '', // passive默认值
+      dateValue: [], // date默认值
+      passiveValue: [], // passive默认值
       extraValue: 'cat_ids', // extra默认值
-      currChartsData: null, // 当前查询项下的图表数据源
-      currUidCount: '0'// current uid_count
+      currChartsData: null // 当前查询项下的图表数据源
     }
   },
   watch: {
-    fieldValue(newValue) {
-      this.passiveOptions = this.passiveMap[newValue]
-      this.passiveValue = this.passiveOptions[0].value
+    dateValue(newValue) {
+      if (newValue.length > 5) {
+        this.dateValue.length = 5
+        this.$notify({
+          title: '非法输入',
+          message: '最多同时显示五天的数据',
+          type: 'warning'
+        })
+      }
     }
   },
   created() {
     this._initApiData()
   },
   methods: {
+    change() {
+      const currTime = initCurrTime()
+      this.dateValue = this.dateValue.filter(item => !(initCurrTime(item) > currTime))
+    },
     searchTargetValue() { // 选中项数据查询
-      this.loading = true
       if (this.fieldValue === 'task_id') {
-        getTaskChartsData(this.passiveValue, this.extraValue).then(res => {
-          this.currChartsData = res.data.dsp_monitor_task[this.passiveValue][this.extraValue]
-          this.currUidCount = res.data.dsp_monitor_task[this.passiveValue].uid_count + ''
+        if (this.passiveValue.length === 0) {
+          this.$message.error('task_id筛选项为空')
+          return
+        }
+        if (this.passiveValue.length > 5) {
+          this.$message.error('最多同时展示5条数据')
+          return
+        }
+        this.loading = true
+        const res = JSON.stringify(this.passiveValue)
+        getTaskChartsData(res, this.extraValue).then(res => {
+          const formatData = formatChartsData('task_id', res.data, this.extraValue)
+          this.currChartsData = formatData
           this.loading = false
+        }).catch(err => {
+          console.error(err)
+          this.loading = false
+          this.$notify({
+            message: '请检查网络后重试'
+          })
         })
-      } else {
-        getDateChartsData(this.passiveValue, this.extraValue).then(res => {
-          this.currChartsData = res.data.dsp_monitor_day[this.passiveValue][this.extraValue]
-          this.currUidCount = res.data.dsp_monitor_day[this.passiveValue].uid_count + ''
+      } else { //    -->date_time数据
+        if (this.dateValue.length === 0) {
+          this.$message.error('date_time筛选项为空')
+          return
+        }
+        this.loading = true
+        const res = setDateArray(this.dateValue)
+        getDateChartsData(res, this.extraValue).then(res => {
+          const formatData = formatChartsData('date_time', res.data, this.extraValue)
+          this.currChartsData = formatData
           this.loading = false
+        }).catch(err => {
+          console.error(err)
+          this.loading = false
+          this.$notify({
+            message: '请检查网络后重试'
+          })
         })
       }
     },
     _initDefaultValues() { // 首次渲染选择器options默认值init
-      this.passiveValue = this.passiveOptions[0].value
+      this.passiveValue = [this.passiveOptions[0].value]
       this.extraValue = this.extraOptions[0].value
       this.searchTargetValue()
     },
     _initApiData() { // 数据请求处理
       getPassiveOptions().then(res => {
-        const { taskIds, dts } = res.data
-        this.passiveMap['task_id'] = passiveOptinsFormat(taskIds)
-        this.passiveMap['date_time'] = passiveOptinsFormat(dts)
-        this.passiveOptions = this.passiveMap[this.fieldValue]
+        const { taskIds } = res.data
+        this.passiveOptions = passiveOptinsFormat(taskIds)
         this._initDefaultValues()
       })
     }

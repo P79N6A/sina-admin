@@ -1,8 +1,17 @@
 <template>
   <el-row>
-    <el-col :span="22" :offset="1">
-      <histogram height="400px" :source="source" :x-axis-name="xAxisName" />
-    </el-col>
+    <div v-for="(item,index) in currChartsData" :key="index">
+      <div>
+        <histogram
+          height="400px"
+          :source="item.data"
+          :x-axis-name="item.xAliasName"
+          :title="item.title"
+          :uid-count="item.uid_count"
+          :chart-id="index+''"
+        />
+      </div>
+    </div>
   </el-row>
 </template>
 
@@ -15,48 +24,8 @@ export default {
   },
   props: {
     currChartsData: {
-      type: Object,
+      type: Array,
       default: null
-    },
-    xName: {
-      type: String,
-      default: '区间'
-    }
-  },
-  data() {
-    return {
-      xAxisName: '',
-      dataSet: []
-    }
-  },
-  watch: {
-    currChartsData: {
-      handler(newValue) {
-        this.initProps(newValue)
-        console.log(newValue)
-      },
-      deep: true
-    }
-  },
-  created() {
-    if (this.currChartsData) {
-      this.initProps(this.currChartsData)
-    } else {
-      this.initProps()
-    }
-  },
-  methods: {
-    resetData() {
-      this.xAxisName = ''
-      this.source = []
-    },
-    initProps(dataSource = {}) {
-      this.resetData()
-      Object.keys(dataSource).forEach(item => {
-        this.source.push([item, dataSource[item]])
-      })
-      this.xAxisName = this.xName
-      this.yAxisName = '次数'
     }
   }
 }

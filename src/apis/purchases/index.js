@@ -1,5 +1,5 @@
 import service from '@/utils/axios'
-const devProxyApi = '/weibo'
+const devProxyApi = ''
 
 function getCoverageData() {
   return service({
@@ -22,10 +22,7 @@ function getCoverageData() {
  * @param {*} dt
  * @returns
  */
-function getTaskChartsData(taskId, type) {
-  const taskData = []
-  taskData[0] = taskId + ''
-  const taskIds = JSON.stringify(taskData)
+function getTaskChartsData(taskIds, type) {
   return service({
     url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',
@@ -39,10 +36,7 @@ function getTaskChartsData(taskId, type) {
   })
 }
 
-function getDateChartsData(dt, type) {
-  const dtsData = []
-  dtsData[0] = dt + ''
-  const dts = JSON.stringify(dtsData)
+function getDateChartsData(dts, type) {
   return service({
     url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',

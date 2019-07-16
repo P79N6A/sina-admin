@@ -1,5 +1,5 @@
 <template>
-  <div id="chart" :style="{width,height}" />
+  <div :id="chartId" :style="{width,height}" />
 </template>
 
 <script>
@@ -24,6 +24,18 @@ export default {
     xAxisName: {
       type: String,
       default: ''
+    },
+    title: {
+      type: String,
+      default: '数据分布展示'
+    },
+    uidCount: {
+      type: String,
+      default: '0'
+    },
+    chartId: {
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -32,12 +44,6 @@ export default {
     }
   },
   watch: {
-    xAxisName: {
-      handler() {
-        this.initChart()
-      },
-      deep: true
-    },
     source: {
       handler() {
         this.initChart()
@@ -57,17 +63,19 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(document.getElementById('chart'))
+      this.chart = echarts.init(document.getElementById(this.chartId))
 
       this.chart.setOption({
         color: ['#3398DB'],
         title: {
-          text: '数据分布展示',
+          text: `${this.title}`,
+          subtext: `UID_COUNT:${this.uidCount}`,
           textStyle: {
             fontWeight: 'bolder',
-            fontSize: 18,
+            fontSize: 16,
             color: '#000000'
-          }
+          },
+          x: 'center'
         },
         tooltip: {
           trigger: 'axis'

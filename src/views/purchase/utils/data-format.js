@@ -1,3 +1,5 @@
+import { initCurrTime } from '@/utils/date'
+
 function coverageFormat(data) {
   const { dsp_monitor_task } = data
   const { dsp_monitor_day } = data
@@ -46,8 +48,45 @@ function passiveOptinsFormat(data) {
   return res
 }
 
+function setDateArray(data) {
+  const res = []
+  data.forEach(item => {
+    res.push(initCurrTime(item))
+  })
+  return JSON.stringify(res)
+}
+
+function formatChartsData(key, dataFrom, xAliasName) {
+  const keyMap = {
+    'task_id': 'dsp_monitor_task',
+    'date_time': 'dsp_monitor_day'
+  }
+  const data = dataFrom[keyMap[key]]
+  const res = []
+  Object.keys(data).forEach(item => {
+    const result = _sourceChange(data[item][xAliasName])
+    res.push({
+      xAliasName: xAliasName,
+      title: item,
+      uid_count: data[item].uid_count + '',
+      data: result
+    })
+  })
+  return res
+}
+
+function _sourceChange(data) {
+  const res = []
+  Object.keys(data).forEach(item => {
+    res.push([item, data[item]])
+  })
+  return res
+}
+
 export {
   coverageFormat,
-  passiveOptinsFormat
+  passiveOptinsFormat,
+  setDateArray,
+  formatChartsData
 }
 
