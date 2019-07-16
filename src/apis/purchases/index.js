@@ -1,9 +1,9 @@
 import service from '@/utils/axios'
-// const devProxyApi = '/weibo'
+const devProxyApi = '/weibo'
 
 function getCoverageData() {
   return service({
-    url: '/4/data/dspFeaDataStat',
+    url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',
     params: {
       cip: 230,
@@ -27,7 +27,7 @@ function getTaskChartsData(taskId, type) {
   taskData[0] = taskId + ''
   const taskIds = JSON.stringify(taskData)
   return service({
-    url: '/4/data/dspFeaDataStat',
+    url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',
     params: {
       cip: 230,
@@ -44,7 +44,7 @@ function getDateChartsData(dt, type) {
   dtsData[0] = dt + ''
   const dts = JSON.stringify(dtsData)
   return service({
-    url: '/4/data/dspFeaDataStat',
+    url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',
     params: {
       cip: 230,
@@ -58,7 +58,7 @@ function getDateChartsData(dt, type) {
 
 function getPassiveOptions() {
   return service({
-    url: '/4/data/dspFeaDataStat',
+    url: `${devProxyApi}/4/data/dspFeaDataStat`,
     method: 'get',
     params: {
       source: '3567320871234567890',

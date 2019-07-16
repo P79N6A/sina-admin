@@ -53,6 +53,7 @@
           </el-row>
         </el-col>
       </el-row>
+      <Table />
     </el-main>
     <el-footer />
   </el-container>
@@ -61,10 +62,11 @@
 <script>
 import DataTable from './components/data-table'
 import PanelTop from '@/components/PanelTop/index'
+import Table from './components/table'
 export default {
   name: 'CoverageStatistics',
   components: {
-    DataTable, PanelTop
+    DataTable, PanelTop, Table
   },
   data() {
     return {

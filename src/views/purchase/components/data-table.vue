@@ -1,79 +1,72 @@
 <template>
   <el-row>
-    <el-col :span="24">
-      <el-row>
-        <el-col :span="24">
-          <el-table
-            :data="tableData"
-            style="width: 100%"
-            :default-sort="{prop: 'date', order: 'descending'}"
-            stripe
-            height="500"
-          >
-            <el-table-column
-              prop="index"
-              label="序号"
-              width="60"
-            />
-            <el-table-column
-              prop="field"
-              label="field"
-              width="220"
-            />
-            <el-table-column
-              prop="reg_time"
-              label="reg_time"
-              sortable
-            />
-            <el-table-column
-              prop="uid"
-              label="uid"
-              sortable
-              width="70"
-            />
-            <el-table-column
-              prop="gender"
-              label="gender"
-              sortable
-              width="100"
-            />
-            <el-table-column
-              prop="age"
-              label="age"
-              sortable
-              width="80"
-            />
-            <el-table-column
-              prop="tag_ids"
-              label="tag_ids"
-              sortable
-              width="100"
-            />
-            <el-table-column
-              prop="cat_ids"
-              label="cat_ids"
-              sortable
-            />
-            <el-table-column
-              prop="city_level"
-              label="city_level"
-              sortable
-            />
-            <el-table-column
-              prop="obj_ids"
-              label="obj_ids"
-              width="80"
-            />
-            <el-table-column
-              prop="user_type_id"
-              label="user_type_id"
-              sortable
-              width="140"
-            />
-          </el-table>
-        </el-col>
-      </el-row>
-    </el-col>
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+      stripe
+      :default-sort="{prop: 'date', order: 'descending'}"
+    >
+      <el-table-column
+        prop="index"
+        label="序号"
+        width="60"
+      />
+      <el-table-column
+        prop="field"
+        label="field"
+        width="220"
+      />
+      <el-table-column
+        prop="reg_time"
+        label="reg_time"
+        sortable
+      />
+      <el-table-column
+        prop="uid"
+        label="uid"
+        sortable
+        width="70"
+      />
+      <el-table-column
+        prop="gender"
+        label="gender"
+        sortable
+        width="100"
+      />
+      <el-table-column
+        prop="age"
+        label="age"
+        sortable
+        width="80"
+      />
+      <el-table-column
+        prop="tag_ids"
+        label="tag_ids"
+        sortable
+        width="100"
+      />
+      <el-table-column
+        prop="cat_ids"
+        label="cat_ids"
+        sortable
+      />
+      <el-table-column
+        prop="city_level"
+        label="city_level"
+        sortable
+      />
+      <el-table-column
+        prop="obj_ids"
+        label="obj_ids"
+        width="80"
+      />
+      <el-table-column
+        prop="user_type_id"
+        label="user_type_id"
+        sortable
+        width="140"
+      />
+    </el-table>
     <el-row>
       <el-col v-if="tableData.length!==0" :span="8" :offset="1" class="page-text h3-font">
         从&nbsp;{{ tableData[0].index }}&nbsp;到&nbsp;{{ tableData[tableData.length-1].index }}&nbsp;/总共&nbsp;{{ wholeData.length }}&nbsp;条数据
@@ -96,7 +89,6 @@
         />
       </el-col>
     </el-row>
-
   </el-row>
 </template>
 
@@ -121,6 +113,23 @@ export default {
   },
   data() {
     return {
+      tableData1: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }],
       wholeData: [], // 所有数据
       coverages_task_id: [],
       coverages_day: [],
@@ -187,12 +196,12 @@ export default {
         this.currWholeLength = this.fieldMap[this.fieldValue].length
         this.sizeChange()
       }).catch(err => {
-        console.log(err)
         this.$notify({
           title: '未知错误',
           message: '请检查网络刷新重试',
           type: 'warning'
         })
+        console.error(err)
       })
     },
     sizeChange(pageIndex = 1) { // 数据分页显示处理
