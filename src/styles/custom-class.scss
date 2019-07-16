@@ -1,0 +1,48 @@
+/* fixed element-ui */
+.header-text-line-height{
+  line-height: 60px;
+}
+.header-bottom-border{
+  border-bottom: 1px solid #BBBBBB;
+}
+
+/* font-size level */
+.h1-font{
+  font: {
+    size: $h1_font_size;
+  }
+}
+.h2-font{
+  font: {
+    size: $h2_font_size;
+  }
+}
+.h3-font{
+  font: {
+    size: $h3_font_size;
+  }
+}
+.h4-font{
+  font: {
+    size: $h4_font_size;
+  }
+}
+
+/* radius set */
+.top-radius{
+  border-radius:5px 5px 0 0;
+} 
+.bottom-radius{
+  border-radius:0 0 5px 5px;
+} 
+
+/* font-weight */
+.bold-weight-font{
+  font-weight: 600;
+}
+
+/* common container */
+.common-container{
+  margin-top: $normal_distance_size;
+  border: 1px solid #DCDFE6;
+}

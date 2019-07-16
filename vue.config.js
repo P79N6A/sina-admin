@@ -24,11 +24,22 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: '/push/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: process.env.NODE_ENV === 'development',
+  // lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  css: {
+    loaderOptions: {
+      // 给 sass-loader 传递选项
+      sass: {
+        // @/ 是 src/ 的别名
+        // 所以这里假设你有 `src/assets/css/varuables.scss` 这个文件
+        data: `@import "@/styles/custom.scss";`
+      }
+    }
+  },
+  lintOnSave: false,
   devServer: {
     port: port,
     open: true,
@@ -39,6 +50,14 @@ module.exports = {
     proxy: {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
+      '/weibo': {
+        target: 'http://wf.i.rc.weibo.com',
+        changeOringin: true,
+        pathRewrite: {
+          '^/weibo': ''
+        },
+        secure: false
+      },
       [process.env.VUE_APP_BASE_API]: {
         target: `http://127.0.0.1:${port}/mock`,
         changeOrigin: true,

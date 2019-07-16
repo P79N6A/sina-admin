@@ -1,0 +1,13 @@
+/* common mixin */
+
+/* flex */
+@mixin flex_row{
+  display: flex;
+  align-items: center;
+}
+
+@mixin flex_column{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

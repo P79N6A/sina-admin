@@ -95,16 +95,26 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/guide',
+  { //  程序化购买数据看板
+    path: '/data_board',
     component: Layout,
-    redirect: '/guide/index',
+    redirect: '/data_board/coverage_statistics',
+    meta: {
+      title: '程序化购买数据看板',
+      icon: 'table'
+    },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
+        path: 'coverage_statistics', //  覆盖率统计
+        component: () => import('@/views/purchase/coverage-statistics'),
+        name: 'CoverageStatistics',
+        meta: { title: '覆盖率统计', noCache: true }
+      },
+      {
+        path: 'data_distribution', //  数据分布展示
+        component: () => import('@/views/purchase/data-distribution'),
+        name: 'DataDistribution',
+        meta: { title: '数据分析展示', noCache: true }
       }
     ]
   },
