@@ -38,13 +38,15 @@ function coverageFormat(data) {
 
 function passiveOptinsFormat(data) {
   const res = []
-  data = data.split(',')
-  data.forEach(item => {
-    res.push({
-      value: item,
-      lable: item
+  if (data) {
+    data = data.split(',')
+    data.forEach(item => {
+      res.push({
+        value: item,
+        lable: item
+      })
     })
-  })
+  }
   return res
 }
 
@@ -62,27 +64,45 @@ function formatChartsData(key, dataFrom, xAliasName) {
     'date_time': 'dsp_monitor_day'
   }
   const data = dataFrom[keyMap[key]]
-  const res = []
+
+  const uidCountMap = []
   Object.keys(data).forEach(item => {
-    const result = _sourceChange(data[item][xAliasName])
-    res.push({
-      xAliasName: xAliasName,
-      title: item,
-      uid_count: data[item].uid_count + '',
-      data: result
+    uidCountMap.push({
+      key: item,
+      uid_count: data[item]['uid_count']
     })
   })
-  return res
-}
 
-function _sourceChange(data) {
-  const res = []
+  const length = Array.from(Object.keys(data)).length// 数据数
+  const chartsMap = []
+
+  /* 收集第一级legends */
+  const legends = []
   Object.keys(data).forEach(item => {
-    res.push([item, data[item]])
+    legends.push(item)
   })
-  return res
-}
 
+  /* 收集key值 */
+  const keys = []
+  const exKey = uidCountMap[0].key + ''
+  Object.keys(data[exKey][xAliasName]).forEach(item => {
+    keys.push(item)
+    chartsMap.push([item])
+  })
+
+  for (let i = 0; i < length; i++) {
+    const currObj = data[uidCountMap[i].key][xAliasName]
+    for (let j = 0; j < keys.length; j++) {
+      chartsMap[j].push(currObj[keys[j]])
+    }
+  }
+
+  return {
+    chartsMap, // 图表绘制数据源
+    uidCountMap, // uid_count映射
+    legends
+  }
+}
 export {
   coverageFormat,
   passiveOptinsFormat,

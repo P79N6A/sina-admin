@@ -37,7 +37,6 @@
             format="yyyyMMdd"
             placeholder="选择一个或多个日期"
             style="width:90%;"
-            :default-value="new Date()"
             size="small"
             @change="change"
           />
@@ -64,8 +63,29 @@
             </el-col>
           </el-row>
           <el-row v-loading="loading">
-            <el-col :span="24">
-              <charts-data :curr-charts-data="currChartsData" />
+            <el-col v-if="showCharts" :span="24">
+              <charts-data :curr-charts-data="currChartsData" :x-alias-name="extraValue" :legends="keys" />
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="22" :offset="1">
+              <el-table
+                :data="UidCountTable"
+                style="width: 100%;marginBottom:20px;marginTop:20px"
+                border
+                stripe
+              >
+                <el-table-column
+                  prop="key"
+                  label="key"
+                  sortable
+                />
+                <el-table-column
+                  prop="uid_count"
+                  label="uid_count"
+                  sortable
+                />
+              </el-table>
             </el-col>
           </el-row>
         </el-col>
@@ -97,7 +117,10 @@ export default {
       dateValue: [], // date默认值
       passiveValue: [], // passive默认值
       extraValue: 'cat_ids', // extra默认值
-      currChartsData: null // 当前查询项下的图表数据源
+      UidCountTable: [],
+      keys: [],
+      currChartsData: null, // 当前查询项下的图表数据源
+      showCharts: false
     }
   },
   watch: {
@@ -133,8 +156,11 @@ export default {
         this.loading = true
         const res = JSON.stringify(this.passiveValue)
         getTaskChartsData(res, this.extraValue).then(res => {
-          const formatData = formatChartsData('task_id', res.data, this.extraValue)
-          this.currChartsData = formatData
+          const { chartsMap, uidCountMap, legends } = formatChartsData('task_id', res.data, this.extraValue)
+          this.currChartsData = chartsMap
+          this.UidCountTable = uidCountMap
+          this.keys = legends
+          this.showCharts = true
           this.loading = false
         }).catch(err => {
           console.error(err)
@@ -151,8 +177,11 @@ export default {
         this.loading = true
         const res = setDateArray(this.dateValue)
         getDateChartsData(res, this.extraValue).then(res => {
-          const formatData = formatChartsData('date_time', res.data, this.extraValue)
-          this.currChartsData = formatData
+          const { chartsMap, uidCountMap, legends } = formatChartsData('date_time', res.data, this.extraValue)
+          this.currChartsData = chartsMap
+          this.UidCountTable = uidCountMap
+          this.keys = legends
+          this.showCharts = true
           this.loading = false
         }).catch(err => {
           console.error(err)

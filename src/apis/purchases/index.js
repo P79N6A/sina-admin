@@ -1,5 +1,5 @@
 import service from '@/utils/axios'
-const devProxyApi = ''
+import { devProxyApi } from '../index'
 
 function getCoverageData() {
   return service({

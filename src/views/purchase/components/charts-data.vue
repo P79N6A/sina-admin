@@ -1,17 +1,13 @@
 <template>
   <el-row>
-    <div v-for="(item,index) in currChartsData" :key="index">
-      <div>
-        <histogram
-          height="400px"
-          :source="item.data"
-          :x-axis-name="item.xAliasName"
-          :title="item.title"
-          :uid-count="item.uid_count"
-          :chart-id="index+''"
-        />
-      </div>
-    </div>
+    <el-col>
+      <histogram
+        height="400px"
+        :source="currChartsData"
+        :x-axis-name="xAliasName"
+        :legends="legends"
+      />
+    </el-col>
   </el-row>
 </template>
 
@@ -24,6 +20,14 @@ export default {
   },
   props: {
     currChartsData: {
+      type: Array,
+      default: null
+    },
+    xAliasName: {
+      type: String,
+      default: ''
+    },
+    legends: {
       type: Array,
       default: null
     }

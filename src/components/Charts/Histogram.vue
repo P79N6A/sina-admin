@@ -36,6 +36,14 @@ export default {
     chartId: {
       type: String,
       default: '0'
+    },
+    tipName: {
+      type: String,
+      default: '次数'
+    },
+    legends: {
+      type: Array,
+      default: null
     }
   },
   data() {
@@ -62,20 +70,41 @@ export default {
     this.chart = null
   },
   methods: {
+    _initSeries() {
+      const res = []
+      if (this.source) {
+        const length = this.source[0].length - 1
+        for (let i = 0; i < length; i++) {
+          res.push({
+            name: this.legends[i],
+            type: 'bar',
+            markLine: {
+              data: [
+                { type: 'average', name: '平均值' }
+              ]
+            }
+          })
+        }
+      }
+      return res
+    },
     initChart() {
+      if (this.source.length === 0) {
+        this.$message.error('存在空数据项')
+        return false
+      }
       this.chart = echarts.init(document.getElementById(this.chartId))
-
       this.chart.setOption({
-        color: ['#3398DB'],
         title: {
           text: `${this.title}`,
-          subtext: `UID_COUNT:${this.uidCount}`,
           textStyle: {
             fontWeight: 'bolder',
             fontSize: 16,
             color: '#000000'
-          },
-          x: 'center'
+          }
+        },
+        legend: {
+          data: this.legends
         },
         tooltip: {
           trigger: 'axis'
@@ -104,25 +133,13 @@ export default {
 
         },
         dataset: {
-          source: [
-            ...this.source
-          ]
+          source: this.source
         },
-        series: [{
-          name: '次数',
-          type: 'bar',
-          barWidth: '50%',
-          markLine: {
-            data: [
-              { type: 'average', name: '平均值' }
-            ]
-          }
-        }
-        ],
+        series: this._initSeries(),
         yAxis: [{
           type: 'value'
         }]
-      })
+      }, true)
     }
   }
 }
