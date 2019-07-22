@@ -53,7 +53,7 @@ function passiveOptinsFormat(data) {
 function setDateArray(data) {
   const res = []
   data.forEach(item => {
-    res.push(initCurrTime(item))
+    res.push(initCurrTime(0, 0, 0, item))
   })
   return JSON.stringify(res)
 }

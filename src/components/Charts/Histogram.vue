@@ -29,10 +29,6 @@ export default {
       type: String,
       default: '数据分布展示'
     },
-    uidCount: {
-      type: String,
-      default: '0'
-    },
     chartId: {
       type: String,
       default: '0'
@@ -44,6 +40,10 @@ export default {
     legends: {
       type: Array,
       default: null
+    },
+    graphics: {
+      type: String,
+      default: 'bar'
     }
   },
   data() {
@@ -77,7 +77,7 @@ export default {
         for (let i = 0; i < length; i++) {
           res.push({
             name: this.legends[i],
-            type: 'bar',
+            type: this.graphics,
             markLine: {
               data: [
                 { type: 'average', name: '平均值' }

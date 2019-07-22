@@ -79,7 +79,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Dashboard', icon: 'dashboard' }
       }
     ]
   },
@@ -91,7 +91,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+        meta: { title: 'Documentation', icon: 'documentation' }
       }
     ]
   },
@@ -100,7 +100,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/data_board/coverage_statistics',
     meta: {
-      title: '程序化购买数据看板',
+      title: '程序化购买',
       icon: 'table'
     },
     children: [
@@ -115,6 +115,29 @@ export const constantRoutes = [
         component: () => import('@/views/purchase/data-distribution'),
         name: 'DataDistribution',
         meta: { title: '数据分析展示', noCache: true }
+      }
+    ]
+  },
+  { //  用户行为数据展示
+    path: '/user_behavior',
+    component: Layout,
+    redirect: '/user_behavior/index',
+    meta: {
+      title: '用户行为',
+      icon: 'user'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/behaviors/behavior-table'),
+        name: 'BehaviorTable',
+        meta: { title: '用户行为表格视图', noCache: true }
+      },
+      {
+        path: 'chart',
+        component: () => import('@/views/behaviors/behavior-chart'),
+        name: 'BehaviorChart',
+        meta: { title: '用户行为数据视图', noCache: true }
       }
     ]
   },

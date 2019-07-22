@@ -141,7 +141,8 @@ export default {
   methods: {
     change() {
       const currTime = initCurrTime()
-      this.dateValue = this.dateValue.filter(item => !(initCurrTime(item) > currTime))
+      console.log(currTime, this.dateValue)
+      this.dateValue = this.dateValue.filter(item => !(initCurrTime(0, 0, 0, item) > currTime))
     },
     searchTargetValue() { // 选中项数据查询
       if (this.fieldValue === 'task_id') {
@@ -166,7 +167,9 @@ export default {
           console.error(err)
           this.loading = false
           this.$notify({
-            message: '请检查网络后重试'
+            title: '未知错误',
+            message: '请检查网络后刷新重试',
+            type: 'error'
           })
         })
       } else { //    -->date_time数据
