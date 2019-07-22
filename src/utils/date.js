@@ -13,6 +13,7 @@ function get_hour_minute() { // 时间段专用
 function timpstampToTime(timestamp) {
   const _ = timestamp ? new Date(timestamp) : new Date()
   return {
+    timestamp: Date.parse(_),
     year: _.getFullYear(),
     month: (_.getMonth() + 1) < 10 ? `0${_.getMonth() + 1}` : _.getMonth() + 1,
     day: _.getDate() < 10 ? `0${_.getDate()}` : _.getDate(),

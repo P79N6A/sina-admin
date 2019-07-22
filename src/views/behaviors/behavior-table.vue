@@ -59,7 +59,7 @@
 import PanelTop from '@/components/PanelTop/index'
 import DataTable from './components/data-table'
 import { getBehaviors } from '@/apis/behaviors'
-import { initCurrTime } from '@/utils/date'
+import { initCurrTime, timpstampToTime } from '@/utils/date'
 import { getPosOptions, initTableDataInDt, secondaryData } from './utils/data-format'
 export default {
   name: 'BehaviorTable',
@@ -74,11 +74,13 @@ export default {
       currTableData: [],
       filterValue: 'date_time',
       secondaryData: [],
-      loading: false
+      loading: false,
+      defaultDate: ''
     }
   },
   created() {
     this.initApiData(initCurrTime(0, 0, -1))
+    this._initdefaultDate()
   },
   methods: {
     searchInfo() {
@@ -94,6 +96,10 @@ export default {
         this.filterValue = 'date_time'
         this.initApiData(initCurrTime(0, 0, 0, this.dateValue))
       }
+    },
+    _initdefaultDate() {
+      const { timestamp } = timpstampToTime()
+      this.dateValue = new Date(timestamp)
     },
     initApiData(dateValue, isDt = true) {
       getBehaviors(dateValue, this.totalValue).then(res => {

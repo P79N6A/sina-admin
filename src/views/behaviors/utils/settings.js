@@ -1,5 +1,9 @@
 const tableOptionsCommon = [
   {
+    prop: 'date_time',
+    label: '日期'
+  },
+  {
     prop: 'send_pv',
     label: '下发pv'
   },
@@ -22,10 +26,6 @@ const tableOptionsCommon = [
   {
     prop: 'action_prod',
     label: '点击素材'
-  },
-  {
-    prop: 'date_time',
-    label: '日期'
   }
 ]
 const secondaryOptions = [

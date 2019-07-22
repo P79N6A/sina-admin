@@ -131,13 +131,13 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/behaviors/behavior-table'),
         name: 'BehaviorTable',
-        meta: { title: '用户行为表格视图', noCache: true }
+        meta: { title: '天级更新', noCache: true }
       },
       {
         path: 'chart',
         component: () => import('@/views/behaviors/behavior-chart'),
         name: 'BehaviorChart',
-        meta: { title: '用户行为数据视图', noCache: true }
+        meta: { title: '实时更新', noCache: true }
       }
     ]
   },
