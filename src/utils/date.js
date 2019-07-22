@@ -4,9 +4,10 @@ function initCurrTime(diffYear = 0, diffMonth = 0, diffDay = 0, _ = new Date()) 
   return `${_.getFullYear() + diffYear}${currMonth}${currDay}`
 }
 
-function get_hour_minute() {
+function get_hour_minute() { // 时间段专用
   const _ = new Date()
-  return `${_.getHours()}:${_.getMinutes()}`
+  const m = _.getMinutes() < 10 ? `00` : _.getMinutes()
+  return `${_.getHours()}:${m}`
 }
 
 function timpstampToTime(timestamp) {

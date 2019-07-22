@@ -98,10 +98,10 @@ export default {
     searchInfo() {
       this.loading = true
       const { year, month, day } = timpstampToTime()
-      const start_h = this._formatTimeKey(this.startTime).hour || '0'
-      const start_m = this._formatTimeKey(this.startTime).minute || '0'
       const end_h = this._formatTimeKey(this.endTime).hour
       const end_m = this._formatTimeKey(this.endTime).minute
+      const start_h = this._formatTimeKey(this.startTime).hour || this._getDefaultStartTime(end_h, end_m).start_h
+      const start_m = this._formatTimeKey(this.startTime).minute || this._getDefaultStartTime(end_h, end_m).start_m
       const _s = new Date(+year, +month - 1, +day, +start_h, +start_m)
       const _e = new Date(+year, +month - 1, +day, +end_h, +end_m)
       getChartBehaviors({
@@ -123,6 +123,25 @@ export default {
         })
         this.loading = false
       })
+    },
+    _getDefaultStartTime(end_h, end_m) {
+      let start_h = ''
+      let start_m = ''
+      if (+end_m - 20 < 0) {
+        start_m = 60 - 20
+        start_h = end_h - 1 < 10 ? `${end_h - 1}` : end_h - 1
+      } else {
+        start_m = +end_m - 20
+        start_h = end_h
+      }
+      console.log({
+        start_h,
+        start_m
+      })
+      return {
+        start_h,
+        start_m
+      }
     },
     _initEndTime() {
       const res = get_hour_minute()

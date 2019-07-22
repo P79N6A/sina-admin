@@ -80,7 +80,7 @@ function initChartsData(dataFrom) {
   const todayRes = []
   const posRes = []
   const legends = []// 素材位图例
-  if (Object.keys(dataFrom.data).length === 0) {
+  if (dataFrom.errcode || Object.keys(dataFrom.data).length === 0) {
     return {
       posRes,
       todayRes,
