@@ -56,6 +56,7 @@ function initTableDataInDt(dataFrom, key) {
 
 function secondaryData(dataFrom, key) {
   const res = []
+
   if (Object.keys(dataFrom.data).length === 0) {
     return res
   }

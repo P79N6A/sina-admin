@@ -184,7 +184,7 @@ export default {
         this.$notify({
           title: '未知错误',
           message: '请检查网络刷新重试',
-          type: 'warning'
+          type: 'error'
         })
         console.error(err)
       })

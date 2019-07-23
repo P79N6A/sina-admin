@@ -7,6 +7,7 @@
     </el-col>
     <el-col v-if="filterField!=='date_time'" :span="24" class="secondary">
       <el-table :data="secondaryData" stripe>
+        <el-table-column label="日期" prop="date_time" />
         <el-table-column label="点击">
           <el-table-column
             v-for="(item,index) in secondaryOptions"

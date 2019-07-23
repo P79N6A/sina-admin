@@ -2,6 +2,7 @@ import { devProxyApi, source } from '../index'
 import service from '@/utils/axios'
 
 function getBehaviors(dt, material_pos = '1', is_material = '1', limit = '10') {
+  dt = JSON.stringify(dt)
   return service({
     url: `${devProxyApi}/4/data/dspActStat`,
     method: 'get',

@@ -82,7 +82,7 @@ export default {
       endTime: '',
       optionsCommon: {
         start: '00:00',
-        step: '00:10',
+        step: '01:00',
         end: ''
       },
       legends: [], // 图例列表

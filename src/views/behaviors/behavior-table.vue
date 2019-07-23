@@ -5,7 +5,7 @@
     </el-header>
     <el-main>
       <el-row>
-        <el-col :span="6">
+        <el-col :span="10">
           <el-container>
             <el-main class="bold-weight-font el-main-1">
               date_time:
@@ -13,8 +13,11 @@
             <el-footer class="el-main-1">
               <el-date-picker
                 v-model="dateValue"
-                type="date"
-                placeholder="选择日期"
+                class="width-banner"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
                 format="yyyyMMdd"
               />
             </el-footer>
@@ -59,7 +62,7 @@
 import PanelTop from '@/components/PanelTop/index'
 import DataTable from './components/data-table'
 import { getBehaviors } from '@/apis/behaviors'
-import { initCurrTime, timpstampToTime } from '@/utils/date'
+import { timpstampToTime } from '@/utils/date'
 import { getPosOptions, initTableDataInDt, secondaryData } from './utils/data-format'
 export default {
   name: 'BehaviorTable',
@@ -79,28 +82,50 @@ export default {
     }
   },
   created() {
-    this.initApiData(initCurrTime(0, 0, -1))
     this._initdefaultDate()
+    this.initApiData(this._initDtParams())
   },
   methods: {
     searchInfo() {
-      if (this.dateValue === '' || !this.dateValue) {
-        this.$message.error('查询项为空')
+      if (!this.dateValue || this.dateValue.length !== 2) {
+        this.$message.error('查询项存在空项')
         return
+      }
+      if (!this._checkDtParams()) {
+        console.log(this._checkDtParams())
+        this.$message.error('仅支持查询包含前一天的数据')
+        this.dateValue.length = 0
+        return false
       }
       this.loading = true
       if (this.totalValue !== 'total') {
         this.filterValue = ''
-        this.initApiData(initCurrTime(0, 0, 0, this.dateValue), false)
+        this.initApiData(this._initDtParams(), false)
       } else {
         this.filterValue = 'date_time'
-        this.initApiData(initCurrTime(0, 0, 0, this.dateValue))
+        this.initApiData(this._initDtParams())
       }
+    },
+    _initDtParams() {
+      return {
+        start_time: `${timpstampToTime(+this.dateValue[0]).year}${timpstampToTime(+this.dateValue[0]).month}${timpstampToTime(+this.dateValue[0]).day}`,
+        end_time: `${timpstampToTime(+this.dateValue[1]).year}${timpstampToTime(+this.dateValue[1]).month}${timpstampToTime(+this.dateValue[1]).day}`
+      }
+    },
+    _checkDtParams() {
+      const sameDayStamp = timpstampToTime().timestamp
+      for (let i = 0; i < 2; i++) {
+        if (+this.dateValue[i] > sameDayStamp) {
+          return false
+        }
+      }
+      return true
     },
     _initdefaultDate() {
       const { timestamp } = timpstampToTime()
+      const timestamp_week_1 = +timestamp - 7000 * 60 * 60 * 24
       const timestamp_day_1 = +timestamp - 1000 * 60 * 60 * 24
-      this.dateValue = new Date(timestamp_day_1)
+      this.dateValue = [new Date(timestamp_week_1), new Date(timestamp_day_1)]
     },
     initApiData(dateValue, isDt = true) {
       getBehaviors(dateValue, this.totalValue).then(res => {
@@ -146,5 +171,8 @@ export default {
 }
 .btn-margin{
   margin-top: $normal_distance_size*2;
+}
+.width-banner{
+  width: 90%;
 }
 </style>
