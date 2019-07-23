@@ -70,7 +70,6 @@
     <el-row>
       <el-col v-if="tableData.length!==0" :span="8" :offset="1" class="page-text h3-font">
         从&nbsp;{{ tableData[0].index }}&nbsp;到&nbsp;{{ tableData[tableData.length-1].index }}&nbsp;/总共&nbsp;{{ wholeData.length }}&nbsp;条数据
-        <!-- <span v-show="hasFiltered">(过滤总条数&nbsp;{{ currWholeLength }}&nbsp;条)</span> -->
       </el-col>
       <el-col v-else class="h3-font page-text" :span="8" :offset="1">
         数据为空/
@@ -85,6 +84,7 @@
           :total="wholeData.length"
           :page-size="page_size"
           hide-on-single-page="true"
+          :current-page="currPageIndex"
           @current-change="sizeChange"
         />
       </el-col>
@@ -143,6 +143,7 @@ export default {
       const length = newValue.length
       if (this.prevFilterLength > length) {
         this.wholeData = this.fieldMap[this.fieldValue]
+        this.currPageIndex = 1
       }
       this.prevFilterLength = length
       this.wholeData = this.wholeData.filter(item => this._getSliceValue(item.field, length) === newValue)
@@ -153,6 +154,7 @@ export default {
       }
       this._resetIndex()
       this.sizeChange()
+      this.currPageIndex = 1
     }
   },
   created() {
@@ -188,7 +190,7 @@ export default {
       })
     },
     sizeChange(pageIndex = 1) { // 数据分页显示处理
-      this.tableData = this.wholeData.slice((pageIndex - 1) * this.paginationValue, pageIndex * this.paginationValue + 1)
+      this.tableData = this.wholeData.slice((pageIndex - 1) * this.paginationValue, pageIndex * this.paginationValue)
     }
   }
 }

@@ -93,8 +93,9 @@ function initChartsData(dataFrom) {
   Object.keys(legendsObj).forEach(item => {
     legends.push(item)
   })
-  Object.keys(data).forEach((item1, index1) => {
+  Object.keys(data).sort().forEach((item1, index1) => {
     const trulyTime = _timeKeyFormat(item1)
+    console.log(trulyTime)
     todayRes.push([trulyTime])
     posRes.push([trulyTime])
     const data_second = data[item1]['action_statistic']

@@ -99,7 +99,8 @@ export default {
     },
     _initdefaultDate() {
       const { timestamp } = timpstampToTime()
-      this.dateValue = new Date(timestamp)
+      const timestamp_day_1 = +timestamp - 1000 * 60 * 60 * 24
+      this.dateValue = new Date(timestamp_day_1)
     },
     initApiData(dateValue, isDt = true) {
       getBehaviors(dateValue, this.totalValue).then(res => {

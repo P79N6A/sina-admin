@@ -41,6 +41,7 @@
                 :legends="legends"
                 graphics="line"
                 title="10p数据展示"
+                :legends-controller="legendsController"
               />
             </el-col>
           </el-row>
@@ -53,6 +54,7 @@
                 :legends="legends"
                 graphics="line"
                 title="today数据展示"
+                :legends-controller="legendsController"
               />
             </el-col>
           </el-row>
@@ -87,7 +89,8 @@ export default {
       posSourceData: [], // pos图表源数据
       todaySourceData: [], // today图表数据源
       isDataInit: false,
-      loading: false
+      loading: false,
+      legendsController: {}
     }
   },
   created() {
@@ -112,6 +115,7 @@ export default {
         this.legends = formatData.legends
         this.posSourceData = formatData.posRes
         this.todaySourceData = formatData.todayRes
+        this._initLegendsController()
         this.isDataInit = true
         this.loading = false
       }).catch(err => {
@@ -124,20 +128,23 @@ export default {
         this.loading = false
       })
     },
+    _initLegendsController() {
+      this.legends.forEach(item => {
+        this.legendsController[item] = false
+      })
+      this.legendsController[this.legends[0]] = true
+    },
     _getDefaultStartTime(end_h, end_m) {
       let start_h = ''
       let start_m = ''
-      if (+end_m - 20 < 0) {
-        start_m = 60 - 20
-        start_h = end_h - 1 < 10 ? `${end_h - 1}` : end_h - 1
+      if (+end_m - 30 < 0) {
+        start_m = 60 - 30
+        start_h = end_h - 1 < 0 ? `00` : end_h - 1
       } else {
-        start_m = +end_m - 20
+        start_m = +end_m - 30
         start_h = end_h
       }
-      console.log({
-        start_h,
-        start_m
-      })
+      this.startTime = `${start_h}:${start_m}`
       return {
         start_h,
         start_m

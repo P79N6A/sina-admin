@@ -6,8 +6,9 @@ function initCurrTime(diffYear = 0, diffMonth = 0, diffDay = 0, _ = new Date()) 
 
 function get_hour_minute() { // 时间段专用
   const _ = new Date()
+  const h = _.getHours() < 10 ? `0${_.getHours()}` : _.getHours()
   const m = _.getMinutes() < 10 ? `00` : _.getMinutes()
-  return `${_.getHours()}:${m}`
+  return `${h}:${m}`
 }
 
 function timpstampToTime(timestamp) {

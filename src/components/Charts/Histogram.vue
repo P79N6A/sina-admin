@@ -44,6 +44,10 @@ export default {
     graphics: {
       type: String,
       default: 'bar'
+    },
+    legendsController: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -77,6 +81,7 @@ export default {
         for (let i = 0; i < length; i++) {
           res.push({
             name: this.legends[i],
+            symbol: 'none',
             type: this.graphics,
             markLine: {
               data: [
@@ -89,8 +94,9 @@ export default {
       return res
     },
     initChart() {
+      console.log(this.source)
       if (this.source.length === 0) {
-        this.$message.error('存在空数据项')
+        this.$message.error('图表存在空数据项')
         return false
       }
       this.chart = echarts.init(document.getElementById(this.chartId))
@@ -104,7 +110,10 @@ export default {
           }
         },
         legend: {
-          data: this.legends
+          data: this.legends,
+          selected: {
+            ...this.legendsController
+          }
         },
         tooltip: {
           trigger: 'axis'
