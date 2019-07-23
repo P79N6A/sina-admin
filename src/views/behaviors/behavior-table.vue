@@ -11,13 +11,26 @@
               date_time:
             </el-main>
             <el-footer class="el-main-1">
-              <el-date-picker
+              <!-- <el-date-picker
                 v-model="dateValue"
                 class="width-banner"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                format="yyyyMMdd"
+              /> -->
+              <el-date-picker
+                v-model="dateValue_s"
+                type="date"
+                placeholder="开始日期"
+                format="yyyyMMdd"
+              />
+              到
+              <el-date-picker
+                v-model="dateValue_e"
+                type="date"
+                placeholder="结束日期"
                 format="yyyyMMdd"
               />
             </el-footer>
@@ -73,7 +86,8 @@ export default {
     return {
       totalValue: 'total', // 素材位
       totalOptions: [],
-      dateValue: '',
+      dateValue_s: '', // 开始日期
+      dateValue_e: '', // 截止日期
       currTableData: [],
       filterValue: 'date_time',
       secondaryData: [],
@@ -87,14 +101,13 @@ export default {
   },
   methods: {
     searchInfo() {
-      if (!this.dateValue || this.dateValue.length !== 2) {
+      if (!this.dateValue_s || !this.dateValue_e || this.dateValue_s === '' || this.dateValue_e === '') {
         this.$message.error('查询项存在空项')
         return
       }
       if (!this._checkDtParams()) {
-        console.log(this._checkDtParams())
-        this.$message.error('仅支持查询包含前一天的数据')
-        this.dateValue.length = 0
+        this.$message.error('请保证结束时间大于开始时间')
+        this.dateValue_e = ''
         return false
       }
       this.loading = true
@@ -108,16 +121,13 @@ export default {
     },
     _initDtParams() {
       return {
-        start_time: `${timpstampToTime(+this.dateValue[0]).year}${timpstampToTime(+this.dateValue[0]).month}${timpstampToTime(+this.dateValue[0]).day}`,
-        end_time: `${timpstampToTime(+this.dateValue[1]).year}${timpstampToTime(+this.dateValue[1]).month}${timpstampToTime(+this.dateValue[1]).day}`
+        start_time: +`${timpstampToTime(+this.dateValue_s).year}${timpstampToTime(+this.dateValue_s).month}${timpstampToTime(+this.dateValue_s).day}`,
+        end_time: +`${timpstampToTime(+this.dateValue_e).year}${timpstampToTime(+this.dateValue_e).month}${timpstampToTime(+this.dateValue_e).day}`
       }
     },
     _checkDtParams() {
-      const sameDayStamp = timpstampToTime().timestamp
-      for (let i = 0; i < 2; i++) {
-        if (+this.dateValue[i] > sameDayStamp) {
-          return false
-        }
+      if (+this.dateValue_s > +this.dateValue_e) {
+        return false
       }
       return true
     },
@@ -125,7 +135,8 @@ export default {
       const { timestamp } = timpstampToTime()
       const timestamp_week_1 = +timestamp - 7000 * 60 * 60 * 24
       const timestamp_day_1 = +timestamp - 1000 * 60 * 60 * 24
-      this.dateValue = [new Date(timestamp_week_1), new Date(timestamp_day_1)]
+      this.dateValue_s = new Date(timestamp_week_1)
+      this.dateValue_e = new Date(timestamp_day_1)
     },
     initApiData(dateValue, isDt = true) {
       getBehaviors(dateValue, this.totalValue).then(res => {
