@@ -3,25 +3,42 @@
     <el-header class="header-text-line-height h1-font header-bottom-border">用户行为</el-header>
     <el-main>
       <el-row>
-        <el-col :span="14">
+        <el-col :span="18">
           <el-container>
             <el-main class="h2-font bold-weight-font">
               选取时间段：
             </el-main>
             <el-footer>
-              <el-time-select
-                v-model="startTime"
-                placeholder="起始时间"
-                :picker-options="optionsCommon"
-              />&nbsp;到&nbsp;
-              <el-time-select
-                v-model="endTime"
-                placeholder="结束时间"
-                :picker-options="{
-                  ...optionsCommon,
-                  minTime:startTime
-                }"
+              <el-select v-model="filterValue" placeholder="请选择">
+                <el-option
+                  v-for="item in filterOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <el-date-picker
+                v-show="filterValue==='time_point'"
+                v-model="dateValue_s"
+                type="datetime"
+                placeholder="开始时间"
               />
+              <span v-show="filterValue==='time_point'">到</span>
+              <el-date-picker
+                v-show="filterValue==='time_point'"
+                v-model="dateValue_e"
+                type="datetime"
+                placeholder="结束时间"
+              />
+              <el-select v-show="filterValue!=='time_point'" v-model="rangeValue" placeholder="请选择">
+                <el-option
+                  v-for="item in rangeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-footer>
           </el-container>
         </el-col>
@@ -36,8 +53,8 @@
             <el-col :span="22" :offset="1">
               <Histogram
                 :source="posSourceData"
-                x-axis-name="timer"
-                chart-id="pos"
+                x-axis-name="time_range"
+                chart-id="10p"
                 :legends="legends"
                 graphics="line"
                 title="10p数据展示"
@@ -49,7 +66,7 @@
             <el-col :span="22" :offset="1">
               <Histogram
                 :source="todaySourceData"
-                x-axis-name="timer"
+                x-axis-name="time_range"
                 chart-id="today"
                 :legends="legends"
                 graphics="line"
@@ -67,10 +84,10 @@
 <script>
 import PanelTop from '@/components/PanelTop/index'
 import Histogram from '@/components/Charts/Histogram'
-import { get_hour_minute } from '@/utils/date'
 import { getChartBehaviors } from '@/apis/behaviors/index'
 import { initChartsData } from './utils/data-format'
 import { timpstampToTime } from '@/utils/date'
+import { filterOptions, rangeOptions } from './utils/settings'
 export default {
   name: 'BehaviorChart',
   components: {
@@ -78,39 +95,74 @@ export default {
   },
   data() {
     return {
-      startTime: '',
-      endTime: '',
-      optionsCommon: {
-        start: '00:00',
-        step: '01:00',
-        end: ''
-      },
+      dateValue_s: '',
+      dateValue_e: '',
+      range_dateValue_s: '',
+      range_dateValue_e: '',
+      filterValue: 'time_point',
+      rangeValue: 'four_hour',
       legends: [], // 图例列表
       posSourceData: [], // pos图表源数据
       todaySourceData: [], // today图表数据源
       isDataInit: false,
       loading: false,
-      legendsController: {}
+      legendsController: {},
+      filterOptions,
+      rangeOptions
     }
   },
   created() {
-    this._initEndTime()
+    this._initDefaultTime()
     this.searchInfo()
   },
   methods: {
     searchInfo() {
+      if (this.filterValue === 'time_point') {
+        if (!this.dateValue_s || !this.dateValue_e || this.dateValue_s === '' || this.dateValue_e === '') {
+          this.$message.error('查询项存在空项')
+          return false
+        }
+        if (!this._dateValueCheck()) {
+          this.$message.error('请保证开始日期小于结束日期')
+          return false
+        }
+        this._initApiData({
+          start_time: +this.dateValue_s / 1000,
+          end_time: +this.dateValue_e / 1000
+        })
+      } else {
+        this._initRangeDateValue(this.rangeValue)
+        this._initApiData({
+          start_time: Math.round(+this.range_dateValue_s / 1000),
+          end_time: Math.round(+this.range_dateValue_e / 1000)
+        })
+      }
+    },
+    _initRangeDateValue(key) {
+      const currrent = timpstampToTime().timestamp
+      this.range_dateValue_e = currrent
+      if (key === 'four_hour') {
+        this.range_dateValue_s = currrent - 60 * 60 * 4 * 1000
+      }
+      if (key === 'full_day') {
+        this.range_dateValue_s = currrent - 86400 * 1000
+      }
+      if (key === 'yeater_fullday') {
+        const { year, month, day } = timpstampToTime()
+        const currDayObj = new Date(+year, +month - 1, +day)
+        this.range_dateValue_e = +currDayObj
+        this.range_dateValue_s = (+currDayObj) - 86400 * 1000
+      }
+      if (key === 'full_week') {
+        this.range_dateValue_s = currrent - 86400 * 7 * 1000
+      }
+      if (key === 'full_month') {
+        this.range_dateValue_s = currrent - 86400 * 30 * 1000
+      }
+    },
+    _initApiData(dateValue) {
       this.loading = true
-      const { year, month, day } = timpstampToTime()
-      const end_h = this._formatTimeKey(this.endTime).hour
-      const end_m = this._formatTimeKey(this.endTime).minute
-      const start_h = this._formatTimeKey(this.startTime).hour || this._getDefaultStartTime(end_h, end_m).start_h
-      const start_m = this._formatTimeKey(this.startTime).minute || this._getDefaultStartTime(end_h, end_m).start_m
-      const _s = new Date(+year, +month - 1, +day, +start_h, +start_m)
-      const _e = new Date(+year, +month - 1, +day, +end_h, +end_m)
-      getChartBehaviors({
-        start_time: Date.parse(_s) / 1000,
-        end_time: Date.parse(_e) / 1000
-      }).then(res => {
+      getChartBehaviors(dateValue).then(res => {
         const formatData = initChartsData(res.data)
         this.legends = formatData.legends
         this.posSourceData = formatData.posRes
@@ -134,38 +186,18 @@ export default {
       })
       this.legendsController[this.legends[0]] = true
     },
-    _getDefaultStartTime(end_h, end_m) {
-      let start_h = ''
-      let start_m = ''
-      if (+end_m - 30 < 0) {
-        start_m = 60 - 30
-        start_h = end_h - 1 < 0 ? `00` : end_h - 1
-      } else {
-        start_m = +end_m - 30
-        start_h = end_h
+    _dateValueCheck() {
+      if (+this.dateValue_s > +this.dateValue_e) {
+        return false
       }
-      this.startTime = `${start_h}:${start_m}`
-      return {
-        start_h,
-        start_m
-      }
+      return true
     },
-    _initEndTime() {
-      const res = get_hour_minute()
-      this.optionsCommon.end = res
-      this.endTime = this._formatEndTime(res)
-    },
-    _formatEndTime(str) {
-      const arr = str.split('')
-      arr[arr.length - 1] = '0'
-      return arr.join('')
-    },
-    _formatTimeKey(str) {
-      const arr = str.split(':')
-      return {
-        hour: arr[0],
-        minute: arr[1]
-      }
+    _initDefaultTime() {
+      const { timestamp, year, month, day } = timpstampToTime()
+      const today_start = +new Date(+year, +month - 1, +day)
+      const today_res = timpstampToTime(today_start)
+      this.dateValue_s = today_res.timestamp
+      this.dateValue_e = timestamp
     }
   }
 }

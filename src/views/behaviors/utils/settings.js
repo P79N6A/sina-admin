@@ -46,9 +46,42 @@ const secondaryOptions = [
     label: 'av'
   }
 ]
+const filterOptions = [
+  {
+    value: 'time_point',
+    label: '精确查找'
+  }, {
+    value: 'time_range',
+    label: '范围查找'
+  }
+]
+
+const rangeOptions = [
+  {
+    value: 'four_hour',
+    label: '最近四小时'
+  }, {
+    value: 'full_day',
+    label: '最近一天'
+  },
+  {
+    value: 'yeater_fullday',
+    label: '昨天'
+  },
+  {
+    value: 'full_week',
+    label: '最近一周'
+  },
+  {
+    value: 'full_month',
+    label: '最近一个月'
+  }
+]
 
 export {
   tableOptionsCommon,
-  secondaryOptions
+  secondaryOptions,
+  filterOptions,
+  rangeOptions
 }
 

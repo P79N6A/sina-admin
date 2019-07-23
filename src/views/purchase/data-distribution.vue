@@ -64,7 +64,7 @@
           </el-row>
           <el-row v-loading="loading">
             <el-col v-if="showCharts" :span="24">
-              <charts-data :curr-charts-data="currChartsData" :x-alias-name="extraValue" :legends="keys" />
+              <charts-data :curr-charts-data="currChartsData" :x-alias-name="extraValue" :legends="keys" :legends-controller="legendsController" />
             </el-col>
           </el-row>
           <el-row>
@@ -120,7 +120,8 @@ export default {
       UidCountTable: [],
       keys: [],
       currChartsData: null, // 当前查询项下的图表数据源
-      showCharts: false
+      showCharts: false,
+      legendsController: {}
     }
   },
   watch: {
@@ -161,6 +162,7 @@ export default {
           this.currChartsData = chartsMap
           this.UidCountTable = uidCountMap
           this.keys = legends
+          this._initKeys()
           this.showCharts = true
           this.loading = false
         }).catch(err => {
@@ -184,6 +186,7 @@ export default {
           this.currChartsData = chartsMap
           this.UidCountTable = uidCountMap
           this.keys = legends
+          this._initKeys()
           this.showCharts = true
           this.loading = false
         }).catch(err => {
@@ -194,6 +197,12 @@ export default {
           })
         })
       }
+    },
+    _initKeys() {
+      this.keys.forEach(item => {
+        this.legendsController[item] = false
+      })
+      this.legendsController[this.keys[0]] = true
     },
     _initDefaultValues() { // 首次渲染选择器options默认值init
       this.passiveValue = [this.passiveOptions[0].value]

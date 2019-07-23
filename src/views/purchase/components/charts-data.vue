@@ -6,6 +6,7 @@
         :source="currChartsData"
         :x-axis-name="xAliasName"
         :legends="legends"
+        :legends-controller="legendsController"
       />
     </el-col>
   </el-row>
@@ -29,6 +30,10 @@ export default {
     },
     legends: {
       type: Array,
+      default: null
+    },
+    legendsController: {
+      type: Object,
       default: null
     }
   }

@@ -11,15 +11,6 @@
               date_time:
             </el-main>
             <el-footer class="el-main-1">
-              <!-- <el-date-picker
-                v-model="dateValue"
-                class="width-banner"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                format="yyyyMMdd"
-              /> -->
               <el-date-picker
                 v-model="dateValue_s"
                 type="date"
