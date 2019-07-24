@@ -1,13 +1,14 @@
-import { devProxyApi, source } from '../index'
+import { devProxyApi, source, cip } from '../index'
 import service from '@/utils/axios'
 
 function getBehaviors(dt, material_pos = '1', is_material = '1', limit = '10') {
   dt = JSON.stringify(dt)
   return service({
-    url: `${devProxyApi}/4/data/dspActStat`,
+    url: `${devProxyApi}/Dsp_data/dspActStat`,
     method: 'get',
     params: {
       source,
+      cip,
       dt,
       material_pos,
       is_material,
@@ -19,10 +20,11 @@ function getBehaviors(dt, material_pos = '1', is_material = '1', limit = '10') {
 function getChartBehaviors(dt, material_pos = 'real_time@all') {
   dt = JSON.stringify(dt)
   return service({
-    url: `${devProxyApi}/4/data/dspActStat`,
+    url: `${devProxyApi}/Dsp_data/dspActStat`,
     method: 'get',
     params: {
       source,
+      cip,
       dt,
       material_pos
     }

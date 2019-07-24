@@ -1,12 +1,12 @@
 import service from '@/utils/axios'
-import { devProxyApi, source } from '../index'
+import { devProxyApi, source, cip } from '../index'
 
 function getCoverageData() {
   return service({
-    url: `${devProxyApi}/4/data/dspFeaDataStat`,
+    url: `${devProxyApi}/Dsp_data/dspFeaDataStat`,
     method: 'get',
     params: {
-      cip: 230,
+      cip,
       source,
       type: 'coverage',
       taskIds: 'all',
@@ -24,10 +24,10 @@ function getCoverageData() {
  */
 function getTaskChartsData(taskIds, type) {
   return service({
-    url: `${devProxyApi}/4/data/dspFeaDataStat`,
+    url: `${devProxyApi}/Dsp_data/dspFeaDataStat`,
     method: 'get',
     params: {
-      cip: 230,
+      cip,
       source,
       type,
       taskIds,

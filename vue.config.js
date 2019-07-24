@@ -51,7 +51,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/weibo': {
-        target: 'http://10.210.244.176',
+        target: 'http://ugpush.intra.weibo.com',
         changeOringin: true,
         pathRewrite: {
           '^/weibo': ''
