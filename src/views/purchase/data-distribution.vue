@@ -158,21 +158,9 @@ export default {
         this.loading = true
         const res = JSON.stringify(this.passiveValue)
         getTaskChartsData(res, this.extraValue).then(res => {
-          const { chartsMap, uidCountMap, legends } = formatChartsData('task_id', res.data, this.extraValue)
-          this.currChartsData = chartsMap
-          this.UidCountTable = uidCountMap
-          this.keys = legends
-          this._initKeys()
-          this.showCharts = true
-          this.loading = false
+          this._setetSearchApiData(res)
         }).catch(err => {
-          console.error(err)
-          this.loading = false
-          this.$notify({
-            title: '未知错误',
-            message: '请检查网络后刷新重试',
-            type: 'error'
-          })
+          this._setSearchCatch(err)
         })
       } else { //    -->date_time数据
         if (this.dateValue.length === 0) {
@@ -182,21 +170,29 @@ export default {
         this.loading = true
         const res = setDateArray(this.dateValue)
         getDateChartsData(res, this.extraValue).then(res => {
-          const { chartsMap, uidCountMap, legends } = formatChartsData('date_time', res.data, this.extraValue)
-          this.currChartsData = chartsMap
-          this.UidCountTable = uidCountMap
-          this.keys = legends
-          this._initKeys()
-          this.showCharts = true
-          this.loading = false
+          this._setetSearchApiData(res)
         }).catch(err => {
-          console.error(err)
-          this.loading = false
-          this.$notify({
-            message: '请检查网络后重试'
-          })
+          this._setSearchCatch(err)
         })
       }
+    },
+    _setetSearchApiData(res) {
+      const { chartsMap, uidCountMap, legends } = formatChartsData(this.fieldValue, res.data, this.extraValue)
+      this.currChartsData = chartsMap
+      this.UidCountTable = uidCountMap
+      this.keys = legends
+      this._initKeys()
+      this.showCharts = true
+      this.loading = false
+    },
+    _setSearchCatch(err) {
+      console.error(err)
+      this.loading = false
+      this.$notify({
+        title: '未知错误',
+        message: '请检查网络后重试',
+        type: 'error'
+      })
     },
     _initKeys() {
       this.keys.forEach(item => {
@@ -211,7 +207,7 @@ export default {
     },
     _initApiData() { // 数据请求处理
       getPassiveOptions().then(res => {
-        const { taskIds } = res.data
+        const { taskIds } = res.data.data
         this.passiveOptions = passiveOptinsFormat(taskIds)
         this._initDefaultValues()
       })

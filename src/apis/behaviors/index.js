@@ -1,4 +1,4 @@
-import { devProxyApi, source, cip } from '../index'
+import { devProxyApi, cip } from '../index'
 import service from '@/utils/axios'
 
 function getBehaviors(dt, material_pos = '1', is_material = '1', limit = '10') {
@@ -7,7 +7,6 @@ function getBehaviors(dt, material_pos = '1', is_material = '1', limit = '10') {
     url: `${devProxyApi}/Dsp_data/dspActStat`,
     method: 'get',
     params: {
-      source,
       cip,
       dt,
       material_pos,
@@ -23,7 +22,6 @@ function getChartBehaviors(dt, material_pos = 'real_time@all') {
     url: `${devProxyApi}/Dsp_data/dspActStat`,
     method: 'get',
     params: {
-      source,
       cip,
       dt,
       material_pos
